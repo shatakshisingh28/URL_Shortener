@@ -206,7 +206,10 @@ For persistent production data, configure a suitable persistent disk or migrate 
 
 ## 📄 License
 
-This project is available for learning and personal portfolio use. Add a `LICENSE` file if you wish to distribute it under a specific open-source license.
+
+This project is licensed under the MIT License.
+See the [LICENSE](LICENSE) file for details.
+
 
 ---
 
