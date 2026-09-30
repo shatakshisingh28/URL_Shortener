@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 URL Shortener</h1>
+        <p class="subtitle">Paste a long URL, get a short one back.</p>
+
+        <form action="/shorten" method="POST" class="shorten-form">
+            <input
+                type="text"
+                name="long_url"
+                placeholder="https://example.com/a-very-long-url-goes-here"
+                required
+            >
+            <button type="submit">Shorten</button>
+        </form>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if short_url %}
+            <div class="result">
+                Your short link:
+                <a href="{{ short_url }}" target="_blank">{{ short_url }}</a>
+                <button class="copy-btn" onclick="copyToClipboard('{{ short_url }}')">Copy</button>
+            </div>
+        {% endif %}
+
+        <h2>Recent links</h2>
+        {% if links %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Short Code</th>
+                    <th>Original URL</th>
+                    <th>Created</th>
+                    <th>Clicks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for link in links %}
+                <tr>
+                    <td><a href="/{{ link.short_code }}" target="_blank">{{ link.short_code }}</a></td>
+                    <td class="long-url" title="{{ link.long_url }}">{{ link.long_url }}</td>
+                    <td>{{ link.created_at[:10] }}</td>
+                    <td>{{ link.click_count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="empty">No links yet — shorten your first one above.</p>
+        {% endif %}
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            const btn = document.querySelector('.copy-btn');
+            const original = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = original; }, 1500);
+        }
+    </script>
+</body>
+</html>
