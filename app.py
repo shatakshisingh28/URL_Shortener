@@ -232,6 +232,24 @@ def qr_code(short_code):
     return send_file(buf, mimetype="image/png")
 
 
+@app.route("/delete/<short_code>", methods=["POST"])
+def delete_link(short_code):
+    """Delete a saved short link and its click history."""
+    db = get_db()
+    row = db.execute(
+        "SELECT id FROM urls WHERE short_code = ?", (short_code,)
+    ).fetchone()
+
+    if row is None:
+        abort(404)
+
+    # Remove analytics rows first because SQLite foreign keys may not be enabled.
+    db.execute("DELETE FROM clicks WHERE url_id = ?", (row["id"],))
+    db.execute("DELETE FROM urls WHERE id = ?", (row["id"],))
+    db.commit()
+    return redirect(url_for("home"))
+
+
 @app.route("/analytics/<short_code>")
 def analytics(short_code):
     db = get_db()
