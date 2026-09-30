@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics — {{ link.short_code }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">&larr; Back</a>
+        <h1>Analytics for <code>{{ link.short_code }}</code></h1>
+        <p class="subtitle long-url" title="{{ link.long_url }}">{{ link.long_url }}</p>
+
+        {% if expired %}
+            <p class="error">This link has expired and no longer redirects, but its history is shown below.</p>
+        {% endif %}
+
+        <div class="stats-row">
+            <div class="stat-box">
+                <div class="stat-value">{{ link.click_count }}</div>
+                <div class="stat-label">Total clicks</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">{{ link.created_at[:10] }}</div>
+                <div class="stat-label">Created</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">{{ link.expires_at[:10] if link.expires_at else "Never" }}</div>
+                <div class="stat-label">Expires</div>
+            </div>
+        </div>
+
+        <div class="qr-section">
+            <img src="/qr/{{ link.short_code }}.png" alt="QR code" class="qr-large">
+            <p class="qr-caption">Scan to open this link</p>
+        </div>
+
+        <h2>Clicks over time</h2>
+        {% if chart_labels %}
+            <canvas id="clicksChart" height="90"></canvas>
+        {% else %}
+            <p class="empty">No clicks recorded yet.</p>
+        {% endif %}
+    </div>
+
+    <script>
+        const labels = {{ chart_labels | tojson }};
+        const values = {{ chart_values | tojson }};
+        if (labels.length > 0) {
+            new Chart(document.getElementById('clicksChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Clicks',
+                        data: values,
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        tension: 0.25,
+                        fill: true,
+                    }]
+                },
+                options: {
+                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

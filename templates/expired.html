@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Link expired</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>⏱️ Link expired</h1>
+        <p>The short link <code>{{ short_code }}</code> has expired and no longer redirects.</p>
+        <a href="/">&larr; Back to URL Shortener</a>
+    </div>
+</body>
+</html>
