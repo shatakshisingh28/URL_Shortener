@@ -307,6 +307,9 @@ def not_found(e):
     return render_template("404.html"), 404
 
 
+# Initialize the database when the application starts,
+# including when running under Gunicorn on Render.
+init_db()
+
 if __name__ == "__main__":
-    init_db()
     app.run(debug=True)
